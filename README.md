@@ -6,12 +6,12 @@ Bsed on final code of [this youtube tutorial.](https://www.youtube.com/watch?v=F
 
 Uses [Ui Kitten](https://akveo.github.io/react-native-ui-kitten/) components
 
-TODO Roadmap:
--Show correct choice after confirming answer
--Review previous answers
--Change quiz settings (Number of items, Category, Difficulty)
--User login
--Save results (local or Firebase)
--Leaderboards
+TODO Roadmap:  
+-Show correct choice after confirming answer  
+-Review previous answers  
+-Change quiz settings (Number of items, Category, Difficulty)  
+-User login  
+-Save results (local or Firebase)  
+-Leaderboards  
 
 
