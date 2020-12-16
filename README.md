@@ -9,6 +9,7 @@ Uses [Ui Kitten](https://akveo.github.io/react-native-ui-kitten/) components
 TODO Roadmap:  
 -Show correct choice after confirming answer  
 -Review previous answers  
+-Timer (Quiz, Question)  
 -Change quiz settings (Number of items, Category, Difficulty)  
 -User login  
 -Save results (local or Firebase)  
