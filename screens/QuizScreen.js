@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { SafeAreaView, View, StyleSheet } from "react-native";
 import {
   Divider,
   Icon,
@@ -8,10 +8,10 @@ import {
   TopNavigation,
   TopNavigationAction,
   Button,
-} from '@ui-kitten/components';
-import { QuestionCard } from '../components/QuestionCard';
-import { Spinner } from '@ui-kitten/components';
-import { decode } from 'base-64';
+} from "@ui-kitten/components";
+import { QuestionCard } from "../components/QuestionCard";
+import { Spinner } from "@ui-kitten/components";
+import { decode } from "base-64";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
@@ -24,11 +24,10 @@ export const QuizScreen = ({ navigation }) => {
   const [gameOver, setGameOver] = useState(true);
 
   const TOTAL_QUESTIONS = 10;
-  const DIFFICULTY = 'easy'; //easy, medium, hard
+  const DIFFICULTY = "easy"; //easy, medium, hard
   const CATEGORY = 15;
 
-  const shuffleArray = (array) =>
-    [...array].sort(() => Math.random() - 0.5);
+  const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
   const fetchQuizQuestions = async (amount, difficulty, category) => {
     const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple&encode=base64`;
@@ -99,35 +98,57 @@ export const QuizScreen = ({ navigation }) => {
       />
       <Divider />
       <Layout
-        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
         <Text category="h1">REACT QUIZ</Text>
         {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
           <Button style={styles.btnStyle} onPress={startTrivia}>
             Start
           </Button>
         ) : null}
-        {loading ? <View style={{ alignItems: 'center' }}><Text category="p1">Loading Questions...</Text><Spinner/></View> : null}
-        {!gameOver && !loading ? <Text category="p1">Score: {score}</Text> : null}
+        {loading ? (
+          <View style={{ alignItems: "center" }}>
+            <Text category="p1">Loading Questions...</Text>
+            <Spinner />
+          </View>
+        ) : null}
+        {!gameOver && !loading ? (
+          <Text category="p1">Score: {score}</Text>
+        ) : null}
         {!loading && !gameOver && (
           <View>
             <Text>
-                Question: {number + 1} / {TOTAL_QUESTIONS}
+              Question: {number + 1} / {TOTAL_QUESTIONS}
             </Text>
             <View>
               <Text>{decode(questions[number].question)}</Text>
             </View>
             {questions[number].answers.map((answer) => (
-                <View
-                  key={answer}
-                  correct={userAnswers[number]?.correctAnswer === answer}
-                  userClicked={userAnswers[number]?.answer === answer}>
+              <View
+                key={answer}
+                correct={userAnswers[number]?.correctAnswer === answer}
+                userClicked={userAnswers[number]?.answer === answer}
+              >
+                {userAnswers[number] ? (
                   <Button
+                    status={
+                      questions[number].correct_answer === answer
+                        ? "success"
+                        : "danger"
+                    }
                     style={styles.btnStyle}
-                    disabled={userAnswers[number] ? true : false}
-                    onPress={() => checkAnswer(answer)}>
+                  >
                     {decode(answer)}
                   </Button>
-                </View>
+                ) : (
+                  <Button
+                    style={styles.btnStyle}
+                    onPress={() => checkAnswer(answer)}
+                  >
+                    {decode(answer)}
+                  </Button>
+                )}
+              </View>
             ))}
           </View>
         )}
