@@ -10,6 +10,7 @@ import {
   Button,
 } from '@ui-kitten/components';
 import { QuestionCard } from '../components/QuestionCard';
+import { Spinner } from '@ui-kitten/components';
 import { decode } from 'base-64';
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
@@ -26,11 +27,10 @@ export const QuizScreen = ({ navigation }) => {
   const DIFFICULTY = 'easy'; //easy, medium, hard
   const CATEGORY = 15;
 
-  const shuffleArray = (array: any[]) =>
+  const shuffleArray = (array) =>
     [...array].sort(() => Math.random() - 0.5);
 
   const fetchQuizQuestions = async (amount, difficulty, category) => {
-    //const endpoint = `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple`;
     const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple&encode=base64`;
     const data = await (await fetch(endpoint)).json();
     return data.results.map((question) => ({
@@ -50,7 +50,6 @@ export const QuizScreen = ({ navigation }) => {
       DIFFICULTY,
       CATEGORY
     );
-    //console.log(newQuestions);
     setQuestions(newQuestions);
     setScore(0);
     setUserAnswers([]);
@@ -60,15 +59,8 @@ export const QuizScreen = ({ navigation }) => {
 
   const checkAnswer = (answer) => {
     if (!gameOver) {
-      // User's answer
-      //const answer = e.currentTarget.value;
-      // Check answer against correct answer
       const correct = questions[number].correct_answer === answer;
-      // Add score if answer is correct
       if (correct) setScore((prev) => prev + 1);
-      // Save the answer in the array for user answers
-      //console.log(answer);
-      //console.log(correct);
       const answerObject = {
         question: questions[number].question,
         answer,
@@ -76,7 +68,6 @@ export const QuizScreen = ({ navigation }) => {
         correctAnswer: questions[number].correct_answer,
       };
       setUserAnswers((prev) => [...prev, answerObject]);
-      console.log(userAnswers);
     }
   };
 
@@ -115,20 +106,17 @@ export const QuizScreen = ({ navigation }) => {
             Start
           </Button>
         ) : null}
-        {!gameOver ? <Text category="p1">Score: {score}</Text> : null}
-        {loading ? <Text category="p1">Loading Questions...</Text> : null}
+        {loading ? <View style={{ alignItems: 'center' }}><Text category="p1">Loading Questions...</Text><Spinner/></View> : null}
+        {!gameOver && !loading ? <Text category="p1">Score: {score}</Text> : null}
         {!loading && !gameOver && (
           <View>
-            <View>
-              <Text>
+            <Text>
                 Question: {number + 1} / {TOTAL_QUESTIONS}
-              </Text>
-            </View>
+            </Text>
             <View>
               <Text>{decode(questions[number].question)}</Text>
             </View>
-            <View>
-              {questions[number].answers.map((answer) => (
+            {questions[number].answers.map((answer) => (
                 <View
                   key={answer}
                   correct={userAnswers[number]?.correctAnswer === answer}
@@ -140,8 +128,7 @@ export const QuizScreen = ({ navigation }) => {
                     {decode(answer)}
                   </Button>
                 </View>
-              ))}
-            </View>
+            ))}
           </View>
         )}
         {!gameOver &&
