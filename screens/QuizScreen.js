@@ -13,7 +13,8 @@ import { QuestionCard } from "../components/QuestionCard";
 import { Spinner } from "@ui-kitten/components";
 import { decode } from "base-64";
 
-const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
+const SettingsIcon = (props) => <Icon {...props} name="settings-2-outline" />;
 
 export const QuizScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -71,9 +72,7 @@ export const QuizScreen = ({ navigation }) => {
   };
 
   const nextQuestion = () => {
-    // Move on to the next question if not the last question
     const nextQ = number + 1;
-
     if (nextQ === TOTAL_QUESTIONS) {
       setGameOver(true);
     } else {
@@ -85,8 +84,16 @@ export const QuizScreen = ({ navigation }) => {
     navigation.goBack();
   };
 
+  const navigateSettings = () => {
+    navigation.goBack();
+  };
+
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+  );
+
+  const SettingsAction = () => (
+    <TopNavigationAction icon={SettingsIcon} onPress={navigateSettings} />
   );
 
   return (
@@ -95,6 +102,7 @@ export const QuizScreen = ({ navigation }) => {
         title="MyApp"
         alignment="center"
         accessoryLeft={BackAction}
+        accessoryRight={SettingsAction}
       />
       <Divider />
       <Layout
