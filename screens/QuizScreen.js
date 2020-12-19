@@ -85,7 +85,7 @@ export const QuizScreen = ({ navigation }) => {
   };
 
   const navigateSettings = () => {
-    navigation.goBack();
+    navigation.navigate("QuizSettings");
   };
 
   const BackAction = () => (
