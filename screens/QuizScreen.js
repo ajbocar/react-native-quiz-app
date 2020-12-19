@@ -24,6 +24,7 @@ export const QuizScreen = ({ navigation }) => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
+  const [apiError, setApiError] = useState(false);
 
   const TOTAL_QUESTIONS = 10;
   //const DIFFICULTY = "easy"; //easy, medium, hard
@@ -35,15 +36,21 @@ export const QuizScreen = ({ navigation }) => {
 
   const fetchQuizQuestions = async (amount, difficulty, category) => {
     const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple&encode=base64`;
-    console.log(endpoint);
+    setApiError(false);
     const data = await (await fetch(endpoint)).json();
-    return data.results.map((question) => ({
-      ...question,
-      answers: shuffleArray([
-        ...question.incorrect_answers,
-        question.correct_answer,
-      ]),
-    }));
+    if (data.results.length < TOTAL_QUESTIONS) {
+      setApiError(true);
+      setGameOver(true);
+      return [];
+    } else {
+      return data.results.map((question) => ({
+        ...question,
+        answers: shuffleArray([
+          ...question.incorrect_answers,
+          question.correct_answer,
+        ]),
+      }));
+    }
   };
 
   const startTrivia = async () => {
@@ -124,10 +131,17 @@ export const QuizScreen = ({ navigation }) => {
             <Spinner />
           </View>
         ) : null}
-        {!gameOver && !loading ? (
+        {!loading && apiError ? (
+          <View style={{ alignItems: "center" }}>
+            <Text category="p1">
+              Please select a different category and/or difficulty.
+            </Text>
+          </View>
+        ) : null}
+        {!gameOver && !apiError && !loading ? (
           <Text category="p1">Score: {score}</Text>
         ) : null}
-        {!loading && !gameOver && (
+        {!loading && !gameOver && !apiError && (
           <View>
             <Text>
               Question: {number + 1} / {TOTAL_QUESTIONS}
@@ -166,6 +180,7 @@ export const QuizScreen = ({ navigation }) => {
         )}
         {!gameOver &&
         !loading &&
+        !apiError &&
         userAnswers.length === number + 1 &&
         number !== TOTAL_QUESTIONS - 1 ? (
           <Button style={styles.btnStyle} onPress={nextQuestion}>

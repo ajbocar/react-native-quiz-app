@@ -40,7 +40,7 @@ export const QuizSettingsScreen = ({ navigation }) => {
   const fetchQuizCategories = async () => {
     const endpoint = `https://opentdb.com/api_category.php`;
     const data = await (await fetch(endpoint)).json();
-    console.log(data);
+    //console.log(data);
     return data.trivia_categories;
   };
 
