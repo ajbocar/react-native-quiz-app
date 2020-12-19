@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import {
   Divider,
@@ -12,6 +12,7 @@ import {
 import { QuestionCard } from "../components/QuestionCard";
 import { Spinner } from "@ui-kitten/components";
 import { decode } from "base-64";
+import { QuizContext } from "../context/QuizContext";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
 const SettingsIcon = (props) => <Icon {...props} name="settings-2-outline" />;
@@ -25,13 +26,16 @@ export const QuizScreen = ({ navigation }) => {
   const [gameOver, setGameOver] = useState(true);
 
   const TOTAL_QUESTIONS = 10;
-  const DIFFICULTY = "easy"; //easy, medium, hard
-  const CATEGORY = 15;
+  //const DIFFICULTY = "easy"; //easy, medium, hard
+  //const CATEGORY = 15;
+
+  const { selectedDifficulty, selectedCategory } = useContext(QuizContext);
 
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
   const fetchQuizQuestions = async (amount, difficulty, category) => {
     const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple&encode=base64`;
+    console.log(endpoint);
     const data = await (await fetch(endpoint)).json();
     return data.results.map((question) => ({
       ...question,
@@ -47,8 +51,8 @@ export const QuizScreen = ({ navigation }) => {
     setGameOver(false);
     const newQuestions = await fetchQuizQuestions(
       TOTAL_QUESTIONS,
-      DIFFICULTY,
-      CATEGORY
+      selectedDifficulty,
+      selectedCategory
     );
     setQuestions(newQuestions);
     setScore(0);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { SafeAreaView, View, StyleSheet } from "react-native";
 import {
   Divider,
@@ -11,7 +11,9 @@ import {
   SelectItem,
   Spinner,
   IndexPath,
+  Button,
 } from "@ui-kitten/components";
+import { QuizContext } from "../context/QuizContext";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
@@ -47,6 +49,16 @@ export const QuizSettingsScreen = ({ navigation }) => {
     const newCategories = await fetchQuizCategories();
     setCategories(newCategories);
     setLoading(false);
+  };
+
+  const { setSelectedDifficulty, setSelectedCategory } = useContext(
+    QuizContext
+  );
+
+  const saveSettings = () => {
+    setSelectedDifficulty(difficultyArray[selectedDifficultyIndex.row]);
+    setSelectedCategory(categories[selectedCategoryIndex.row].id);
+    navigation.goBack();
   };
 
   useEffect(() => {
@@ -100,6 +112,9 @@ export const QuizSettingsScreen = ({ navigation }) => {
                 <SelectItem title={category.name} key={category.id} />
               ))}
             </Select>
+            <Button style={styles.btnStyle} onPress={saveSettings}>
+              Save Settings
+            </Button>
           </View>
         )}
       </Layout>
@@ -110,5 +125,8 @@ export const QuizSettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   select: {
     width: 300,
+  },
+  btnStyle: {
+    margin: 5,
   },
 });

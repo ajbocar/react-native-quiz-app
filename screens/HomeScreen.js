@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Button, Divider, Layout, TopNavigation } from "@ui-kitten/components";
+import { ThemeContext } from "../context/ThemeContext";
 
 export const HomeScreen = ({ navigation }) => {
   const navigateDetails = () => {
@@ -11,6 +12,8 @@ export const HomeScreen = ({ navigation }) => {
     navigation.navigate("Quiz");
   };
 
+  const themeContext = useContext(ThemeContext);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <TopNavigation title="MyApp" alignment="center" />
@@ -18,8 +21,8 @@ export const HomeScreen = ({ navigation }) => {
       <Layout
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <Button style={styles.btnStyle} onPress={navigateDetails}>
-          OPEN DETAILS
+        <Button style={styles.btnStyle} onPress={themeContext.toggleTheme}>
+          TOGGLE THEME
         </Button>
         <Button style={styles.btnStyle} onPress={navigateQuiz}>
           OPEN QUIZ
