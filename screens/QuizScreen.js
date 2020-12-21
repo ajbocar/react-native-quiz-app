@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import React, { useState, useContext } from 'react'
+import { SafeAreaView, View, StyleSheet } from 'react-native'
 import {
   Divider,
   Icon,
@@ -8,104 +8,103 @@ import {
   TopNavigation,
   TopNavigationAction,
   Button,
-} from "@ui-kitten/components";
-import { QuestionCard } from "../components/QuestionCard";
-import { Spinner } from "@ui-kitten/components";
-import { decode } from "base-64";
-import { QuizContext } from "../context/QuizContext";
+  Spinner,
+} from '@ui-kitten/components'
+import { decode } from 'base-64'
+import PropTypes from 'prop-types'
+import { QuizContext } from '../context/QuizContext'
 
-const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />;
-const SettingsIcon = (props) => <Icon {...props} name="settings-2-outline" />;
+const BackIcon = (props) => <Icon {...props} name="arrow-back-outline" />
+const SettingsIcon = (props) => <Icon {...props} name="settings-2-outline" />
 
 export const QuizScreen = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState([]);
-  const [number, setNumber] = useState(0);
-  const [userAnswers, setUserAnswers] = useState([]);
-  const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(true);
-  const [apiError, setApiError] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [questions, setQuestions] = useState([])
+  const [number, setNumber] = useState(0)
+  const [userAnswers, setUserAnswers] = useState([])
+  const [score, setScore] = useState(0)
+  const [gameOver, setGameOver] = useState(true)
+  const [apiError, setApiError] = useState(false)
 
-  const TOTAL_QUESTIONS = 10;
-  //const DIFFICULTY = "easy"; //easy, medium, hard
-  //const CATEGORY = 15;
+  const TOTAL_QUESTIONS = 10
+  // const DIFFICULTY = "easy"; //easy, medium, hard
+  // const CATEGORY = 15;
 
-  const { selectedDifficulty, selectedCategory } = useContext(QuizContext);
+  const { selectedDifficulty, selectedCategory } = useContext(QuizContext)
 
-  const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
+  const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5)
 
   const fetchQuizQuestions = async (amount, difficulty, category) => {
-    const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple&encode=base64`;
-    setApiError(false);
-    const data = await (await fetch(endpoint)).json();
+    const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple&encode=base64`
+    setApiError(false)
+    const data = await (await fetch(endpoint)).json()
     if (data.results.length < TOTAL_QUESTIONS) {
-      setApiError(true);
-      setGameOver(true);
-      return [];
-    } else {
-      return data.results.map((question) => ({
-        ...question,
-        answers: shuffleArray([
-          ...question.incorrect_answers,
-          question.correct_answer,
-        ]),
-      }));
+      setApiError(true)
+      setGameOver(true)
+      return []
     }
-  };
+    return data.results.map((question) => ({
+      ...question,
+      answers: shuffleArray([
+        ...question.incorrect_answers,
+        question.correct_answer,
+      ]),
+    }))
+  }
 
   const startTrivia = async () => {
-    setLoading(true);
-    setGameOver(false);
+    setLoading(true)
+    setGameOver(false)
     const newQuestions = await fetchQuizQuestions(
       TOTAL_QUESTIONS,
       selectedDifficulty,
-      selectedCategory
-    );
-    setQuestions(newQuestions);
-    setScore(0);
-    setUserAnswers([]);
-    setNumber(0);
-    setLoading(false);
-  };
+      selectedCategory,
+    )
+    setQuestions(newQuestions)
+    setScore(0)
+    setUserAnswers([])
+    setNumber(0)
+    setLoading(false)
+  }
 
   const checkAnswer = (answer) => {
     if (!gameOver) {
-      const correct = questions[number].correct_answer === answer;
-      if (correct) setScore((prev) => prev + 1);
+      const correct = questions[number].correct_answer === answer
+      if (correct) setScore((prev) => prev + 1)
       const answerObject = {
         question: questions[number].question,
         answer,
         correct,
         correctAnswer: questions[number].correct_answer,
-      };
-      setUserAnswers((prev) => [...prev, answerObject]);
+      }
+      setUserAnswers((prev) => [...prev, answerObject])
     }
-  };
+  }
 
   const nextQuestion = () => {
-    const nextQ = number + 1;
+    const nextQ = number + 1
     if (nextQ === TOTAL_QUESTIONS) {
-      setGameOver(true);
+      setGameOver(true)
     } else {
-      setNumber(nextQ);
+      setNumber(nextQ)
     }
-  };
+  }
 
   const navigateBack = () => {
-    navigation.goBack();
-  };
+    navigation.goBack()
+  }
 
   const navigateSettings = () => {
-    navigation.navigate("QuizSettings");
-  };
+    navigation.navigate('QuizSettings')
+  }
 
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
-  );
+  )
 
   const SettingsAction = () => (
     <TopNavigationAction icon={SettingsIcon} onPress={navigateSettings} />
-  );
+  )
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -117,7 +116,7 @@ export const QuizScreen = ({ navigation }) => {
       />
       <Divider />
       <Layout
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
       >
         <Text category="h1">REACT QUIZ</Text>
         {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
@@ -126,13 +125,13 @@ export const QuizScreen = ({ navigation }) => {
           </Button>
         ) : null}
         {loading ? (
-          <View style={{ alignItems: "center" }}>
+          <View style={{ alignItems: 'center' }}>
             <Text category="p1">Loading Questions...</Text>
             <Spinner />
           </View>
         ) : null}
         {!loading && apiError ? (
-          <View style={{ alignItems: "center" }}>
+          <View style={{ alignItems: 'center' }}>
             <Text category="p1">
               Please select a different category and/or difficulty.
             </Text>
@@ -150,17 +149,13 @@ export const QuizScreen = ({ navigation }) => {
               <Text>{decode(questions[number].question)}</Text>
             </View>
             {questions[number].answers.map((answer) => (
-              <View
-                key={answer}
-                correct={userAnswers[number]?.correctAnswer === answer}
-                userClicked={userAnswers[number]?.answer === answer}
-              >
+              <View key={answer}>
                 {userAnswers[number] ? (
                   <Button
                     status={
                       questions[number].correct_answer === answer
-                        ? "success"
-                        : "danger"
+                        ? 'success'
+                        : 'danger'
                     }
                     style={styles.btnStyle}
                   >
@@ -189,11 +184,18 @@ export const QuizScreen = ({ navigation }) => {
         ) : null}
       </Layout>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   btnStyle: {
     margin: 5,
   },
-});
+})
+
+QuizScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+  }).isRequired,
+}

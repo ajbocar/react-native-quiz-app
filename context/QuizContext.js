@@ -1,11 +1,12 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState } from 'react'
+import PropTypes from 'prop-types'
 
-export const QuizContext = createContext();
+export const QuizContext = createContext()
 
 // This context provider is passed to any component requiring the context
 export const QuizProvider = ({ children }) => {
-  const [selectedDifficulty, setSelectedDifficulty] = React.useState("easy");
-  const [selectedCategory, setSelectedCategory] = React.useState(31);
+  const [selectedDifficulty, setSelectedDifficulty] = useState('easy')
+  const [selectedCategory, setSelectedCategory] = useState(31)
 
   return (
     <QuizContext.Provider
@@ -18,5 +19,9 @@ export const QuizProvider = ({ children }) => {
     >
       {children}
     </QuizContext.Provider>
-  );
-};
+  )
+}
+
+QuizProvider.propTypes = {
+  children: PropTypes.shape({}).isRequired,
+}

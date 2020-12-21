@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import React, { useState, useEffect, useContext } from 'react'
+import { SafeAreaView, View, StyleSheet } from 'react-native'
 import {
   Divider,
   Icon,
@@ -12,58 +12,57 @@ import {
   Spinner,
   IndexPath,
   Button,
-} from "@ui-kitten/components";
-import { QuizContext } from "../context/QuizContext";
+} from '@ui-kitten/components'
+import PropTypes from 'prop-types'
+import { QuizContext } from '../context/QuizContext'
 
-const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />
 
 export const QuizSettingsScreen = ({ navigation }) => {
   const navigateBack = () => {
-    navigation.goBack();
-  };
+    navigation.goBack()
+  }
 
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
-  );
+  )
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [selectedDifficultyIndex, setSelectedDifficultyIndex] = React.useState(
-    new IndexPath(0)
-  );
+    new IndexPath(0),
+  )
   const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(
-    new IndexPath(0)
-  );
-  const [categories, setCategories] = useState([]);
+    new IndexPath(0),
+  )
+  const [categories, setCategories] = useState([])
 
-  const difficultyArray = ["easy", "medium", "hard"];
+  const difficultyArray = ['easy', 'medium', 'hard']
 
   const fetchQuizCategories = async () => {
-    const endpoint = `https://opentdb.com/api_category.php`;
-    const data = await (await fetch(endpoint)).json();
-    //console.log(data);
-    return data.trivia_categories;
-  };
+    const endpoint = `https://opentdb.com/api_category.php`
+    const data = await (await fetch(endpoint)).json()
+    // console.log(data);
+    return data.trivia_categories
+  }
 
   const initializePage = async () => {
-    setLoading(true);
-    const newCategories = await fetchQuizCategories();
-    setCategories(newCategories);
-    setLoading(false);
-  };
+    setLoading(true)
+    const newCategories = await fetchQuizCategories()
+    setCategories(newCategories)
+    setLoading(false)
+  }
 
-  const { setSelectedDifficulty, setSelectedCategory } = useContext(
-    QuizContext
-  );
+  const { setSelectedDifficulty, setSelectedCategory } = useContext(QuizContext)
 
   const saveSettings = () => {
-    setSelectedDifficulty(difficultyArray[selectedDifficultyIndex.row]);
-    setSelectedCategory(categories[selectedCategoryIndex.row].id);
-    navigation.goBack();
-  };
+    setSelectedDifficulty(difficultyArray[selectedDifficultyIndex.row])
+    setSelectedCategory(categories[selectedCategoryIndex.row].id)
+    navigation.goBack()
+  }
 
   useEffect(() => {
-    initializePage();
-  }, []);
+    initializePage()
+  }, [])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -74,7 +73,7 @@ export const QuizSettingsScreen = ({ navigation }) => {
       />
       <Divider />
       <Layout
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         level="1"
       >
         <Text category="h1">Quiz Settings</Text>
@@ -90,7 +89,7 @@ export const QuizSettingsScreen = ({ navigation }) => {
           <SelectItem title={difficultyArray[2]} />
         </Select>
         {loading ? (
-          <View style={{ alignItems: "center" }}>
+          <View style={{ alignItems: 'center' }}>
             <Text category="p1">Loading Categories...</Text>
             <Spinner />
           </View>
@@ -102,7 +101,7 @@ export const QuizSettingsScreen = ({ navigation }) => {
               value={
                 categories[selectedCategoryIndex.row]
                   ? categories[selectedCategoryIndex.row].name
-                  : ""
+                  : ''
               }
               style={styles.select}
               selectedIndex={selectedCategoryIndex}
@@ -119,8 +118,8 @@ export const QuizSettingsScreen = ({ navigation }) => {
         )}
       </Layout>
     </SafeAreaView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   select: {
@@ -129,4 +128,10 @@ const styles = StyleSheet.create({
   btnStyle: {
     margin: 5,
   },
-});
+})
+
+QuizSettingsScreen.propTypes = {
+  navigation: PropTypes.shape({
+    goBack: PropTypes.func.isRequired,
+  }).isRequired,
+}

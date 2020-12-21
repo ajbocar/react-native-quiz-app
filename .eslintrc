@@ -1,5 +1,5 @@
 {
-    "extends": "react-app",
+    "extends": "@imaginary-cloud/react",
     "plugins": ["prettier"],
     "rules": {
       "prettier/prettier": "error"
